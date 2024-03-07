@@ -50,7 +50,7 @@ pipeline {
                     // Only remove containers if there are any
                     sh 'docker ps -a -q | xargs -r docker rm'
                     // Only remove images if there are any
-                    sh 'docker images -q | xargs -r docker rmi'
+                    sh 'docker images -q | xargs -r docker rmi -f'
                     // Clean up unused Docker objects
                     sh 'docker system prune -af'
                 }
