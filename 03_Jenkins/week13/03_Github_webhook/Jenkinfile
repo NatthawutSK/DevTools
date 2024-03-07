@@ -45,10 +45,13 @@ pipeline {
         stage('Clear Docker Components') {
             steps {
                 script {
-                    // Remove Docker images and containers
-                    sh 'docker stop $(docker ps -a -q)'  
-                    sh  'docker rm $(docker ps -a -q)' 
-                    sh  'docker rmi $(docker images -q)'
+                    // Only stop containers if there are any running
+                    sh 'docker ps -q | xargs -r docker stop'
+                    // Only remove containers if there are any
+                    sh 'docker ps -a -q | xargs -r docker rm'
+                    // Only remove images if there are any
+                    sh 'docker images -q | xargs -r docker rmi'
+                    // Clean up unused Docker objects
                     sh 'docker system prune -af'
                 }
             }
