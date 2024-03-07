@@ -42,31 +42,12 @@ pipeline {
             }
         }
 
-        stage('Clear Docker Components') {
-            steps {
-                script {
-                    // Only stop containers if there are any running
-                    sh 'docker ps -q | xargs -r docker stop'
-                    // Only remove containers if there are any
-                    sh 'docker ps -a -q | xargs -r docker rm'
-                    // Only remove images if there are any
-                    sh 'docker images -q | xargs -r docker rmi -f'
-                    // Clean up unused Docker objects
-                    sh 'docker system prune -af'
-                }
-            }
-        }
 
 
-        stage('Deploy') {
-            steps {
-                script {
-                    // Pull the Docker image from Docker Hub
-                    sh 'docker pull $DOCKER_IMAGE'
-                    // Run the Docker container
-                    sh 'docker run -d --name fastapi-webhook -p 8085:80 $DOCKER_IMAGE'
+        stage('Trigger to slave job'){
+                steps {
+                    build job: 'webhook-ssh'
                 }
-            }
         }
     }
 
